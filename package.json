@@ -1,0 +1,10 @@
+{
+  "name": "impact-climatique-benin",
+  "version": "1.0.0",
+  "description": "Visualisation des indicateurs climatiques du Benin - World Bank data",
+  "scripts": {
+    "build-data": "node scripts/build-data.js",
+    "serve": "npx serve public -p 3000",
+    "start": "npm run build-data && npm run serve"
+  }
+}

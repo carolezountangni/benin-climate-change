@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visualisation des indicateurs climatiques et de l'impact du changement climatique au Benin - donnees Banque Mondiale">
+  <title>Impact Climatique Benin | Visualisation des donnees</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="currentColor"/>
+          <path d="M16 6C10 6 8 12 8 16c0 4 2 10 8 10s8-6 8-10c0-4-2-10-8-10z" fill="white" opacity="0.9"/>
+        </svg>
+        <span>Impact Climatique Benin</span>
+      </a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="#indicateurs">Indicateurs</a>
+        <a href="#previsions">Previsions</a>
+        <a href="#impacts">Impacts</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section id="accueil" class="hero">
+      <div class="hero-content">
+        <p class="hero-label">World Bank Climate Change Indicators</p>
+        <h1>Impact climatique au Benin</h1>
+        <p class="hero-desc">
+          Visualisation des indicateurs climatiques, exposition aux risques,
+          resilience, emissions et consommation energetique du Benin.
+          Donnees issues du <a href="https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin" target="_blank" rel="noopener">portail Banque Mondiale</a>.
+        </p>
+      </div>
+      <div class="hero-stats" id="hero-stats">
+        <div class="stat-card">
+          <span class="stat-value" data-stat="agriculture">--</span>
+          <span class="stat-label">Agriculture (% PIB)</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" data-stat="electricite">--</span>
+          <span class="stat-label">Acces electricite</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" data-stat="elevation">--</span>
+          <span class="stat-label">Pop. zone &lt;5m alt.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="indicateurs" class="section">
+      <div class="section-header">
+        <h2>Indicateurs climatiques</h2>
+        <p>Evolution des principaux indicateurs lies au climat et au developpement durable</p>
+      </div>
+      <div class="chart-filters">
+        <label for="indicator-select">Indicateur</label>
+        <select id="indicator-select" aria-label="Choisir un indicateur">
+          <option value="">Chargement...</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <canvas id="chart-main" role="img" aria-label="Graphique de l'indicateur selectionne"></canvas>
+      </div>
+    </section>
+
+    <section id="previsions" class="section section-alt">
+      <div class="section-header">
+        <h2>Previsions</h2>
+        <p>Projections basees sur les tendances observees (regression lineaire sur les 15 dernieres annees)</p>
+      </div>
+      <div class="chart-filters">
+        <label for="forecast-select">Indicateur a projeter</label>
+        <select id="forecast-select" aria-label="Choisir un indicateur pour la prevision">
+          <option value="">Chargement...</option>
+        </select>
+        <label for="forecast-years">Annees a projeter</label>
+        <input type="number" id="forecast-years" value="10" min="1" max="30" aria-label="Nombre d'annees">
+      </div>
+      <div class="chart-container">
+        <canvas id="chart-forecast" role="img" aria-label="Graphique des previsions"></canvas>
+      </div>
+    </section>
+
+    <section id="impacts" class="section">
+      <div class="section-header">
+        <h2>Apercu des impacts</h2>
+        <p>Resume des principaux enjeux climatiques pour le Benin</p>
+      </div>
+      <div class="impacts-grid" id="impacts-grid">
+        <!-- Rempli dynamiquement -->
+      </div>
+    </section>
+
+    <section class="section section-alt sources">
+      <div class="section-header">
+        <h2>Sources et methodologie</h2>
+        <p>Donnees et references utilisees pour cette visualisation</p>
+      </div>
+      <div class="sources-content">
+        <p>
+          Les donnees proviennent du <strong>World Bank Climate Change Indicators for Benin</strong>,
+          disponibles sur <a href="https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin" target="_blank" rel="noopener">HDX</a>
+          et <a href="https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2" target="_blank" rel="noopener">Donnees Publiques du Benin</a>.
+        </p>
+        <p>
+          Le changement climatique touche particulierement les pays en developpement. Ses effets (temperatures plus elevees,
+          modification des precipitations, montee du niveau de la mer, evenements meteorologiques extremes) menacent
+          l'agriculture, l'alimentation et l'acces a l'eau.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>Impact Climatique Benin - Donnees Banque Mondiale</p>
+      <p class="footer-meta">Derniere mise a jour: <span id="data-date">--</span></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
