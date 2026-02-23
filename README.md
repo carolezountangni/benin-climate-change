@@ -1,11 +1,11 @@
 # Impact Climatique Benin
 
-Site de visualisation des indicateurs climatiques du Benin (donnees Banque Mondiale).
+Site de visualisation des indicateurs climatiques du Benin.
 
 ## Donnees
 
-- Source: [World Bank Climate Change Indicators for Benin](https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin)
-- Datasets: [Donnees Publiques du Benin](https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2)
+- **Source principale** : [Donnees Publiques du Benin - Benin Climate Change](https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2)
+- Indicateurs World Bank Climate Change (aussi disponibles sur [HDX](https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin))
 
 ## Lancement local
 

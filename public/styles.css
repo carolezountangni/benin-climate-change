@@ -396,6 +396,15 @@ a:hover {
   font-size: 0.875rem;
 }
 
+.footer a {
+  color: #e8f5ee;
+  text-decoration: underline;
+}
+
+.footer a:hover {
+  color: #fff;
+}
+
 .footer-meta {
   margin-top: 0.25rem;
   opacity: 0.85;

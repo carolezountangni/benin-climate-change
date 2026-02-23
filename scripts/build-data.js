@@ -103,10 +103,10 @@ function groupByIndicator(data) {
 const { data, indicators } = loadAndMergeData();
 const byIndicator = groupByIndicator(data);
 
-const output = {
+  const output = {
   meta: {
-    source: 'World Bank - Climate Change Indicators for Benin',
-    url: 'https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin',
+    source: 'Donnees Publiques du Benin - Benin Climate Change',
+    url: 'https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2',
     lastUpdate: new Date().toISOString().slice(0, 10)
   },
   indicators,
