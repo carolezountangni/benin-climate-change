@@ -166,6 +166,11 @@ a:hover {
   margin-bottom: 0.25rem;
 }
 
+.stat-value .skeleton {
+  color: var(--color-border);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 .stat-label {
   font-size: 0.8125rem;
   color: var(--color-text-muted);
@@ -234,6 +239,62 @@ a:hover {
   position: relative;
 }
 
+.chart-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  z-index: 1;
+}
+
+.chart-loading.is-hidden {
+  display: none;
+}
+
+.impact-skeleton {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.impact-skeleton span {
+  display: block;
+  height: 1rem;
+  background: linear-gradient(90deg, var(--color-border) 25%, #e8eeec 50%, var(--color-border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.impact-skeleton span:first-child {
+  width: 60%;
+  margin-bottom: 0.75rem;
+}
+
+.impact-skeleton span:nth-child(2) {
+  width: 40%;
+  margin-bottom: 0.5rem;
+}
+
+.impact-skeleton span:last-child {
+  width: 80%;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .chart-container canvas {
   max-height: 400px;
 }
@@ -270,12 +331,31 @@ a:hover {
   color: var(--color-primary);
 }
 
+.impact-card .value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
 .impact-card .value {
   font-family: var(--font-mono);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-primary);
-  margin-bottom: 0.25rem;
+}
+
+.impact-card .trend {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.impact-card .trend-up {
+  color: #0d4f2b;
+}
+
+.impact-card .trend-down {
+  color: var(--color-text-muted);
 }
 
 .impact-card .desc {

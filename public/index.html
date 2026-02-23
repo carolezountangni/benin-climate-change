@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Visualisation des indicateurs climatiques et de l'impact du changement climatique au Benin - donnees Banque Mondiale">
   <title>Impact Climatique Benin | Visualisation des donnees</title>
+  <meta property="og:title" content="Impact Climatique Benin">
+  <meta property="og:description" content="Visualisation des indicateurs climatiques, previsions et impacts du changement climatique au Benin (Banque Mondiale)">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,17 +50,17 @@
           Donnees issues du <a href="https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin" target="_blank" rel="noopener">portail Banque Mondiale</a>.
         </p>
       </div>
-      <div class="hero-stats" id="hero-stats">
+      <div class="hero-stats" id="hero-stats" aria-busy="true">
         <div class="stat-card">
-          <span class="stat-value" data-stat="agriculture">--</span>
+          <span class="stat-value" data-stat="agriculture"><span class="skeleton">--</span></span>
           <span class="stat-label">Agriculture (% PIB)</span>
         </div>
         <div class="stat-card">
-          <span class="stat-value" data-stat="electricite">--</span>
+          <span class="stat-value" data-stat="electricite"><span class="skeleton">--</span></span>
           <span class="stat-label">Acces electricite</span>
         </div>
         <div class="stat-card">
-          <span class="stat-value" data-stat="elevation">--</span>
+          <span class="stat-value" data-stat="elevation"><span class="skeleton">--</span></span>
           <span class="stat-label">Pop. zone &lt;5m alt.</span>
         </div>
       </div>
@@ -73,7 +77,8 @@
           <option value="">Chargement...</option>
         </select>
       </div>
-      <div class="chart-container">
+      <div class="chart-container" id="chart-main-wrap">
+        <div class="chart-loading" id="chart-main-loading">Chargement des donnees...</div>
         <canvas id="chart-main" role="img" aria-label="Graphique de l'indicateur selectionne"></canvas>
       </div>
     </section>
@@ -91,7 +96,8 @@
         <label for="forecast-years">Annees a projeter</label>
         <input type="number" id="forecast-years" value="10" min="1" max="30" aria-label="Nombre d'annees">
       </div>
-      <div class="chart-container">
+      <div class="chart-container" id="chart-forecast-wrap">
+        <div class="chart-loading" id="chart-forecast-loading">Chargement des previsions...</div>
         <canvas id="chart-forecast" role="img" aria-label="Graphique des previsions"></canvas>
       </div>
     </section>
@@ -101,8 +107,13 @@
         <h2>Apercu des impacts</h2>
         <p>Resume des principaux enjeux climatiques pour le Benin</p>
       </div>
-      <div class="impacts-grid" id="impacts-grid">
-        <!-- Rempli dynamiquement -->
+      <div class="impacts-grid" id="impacts-grid" aria-busy="true">
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
       </div>
     </section>
 
