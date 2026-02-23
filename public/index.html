@@ -29,7 +29,9 @@
         <a href="#accueil">Accueil</a>
         <a href="#indicateurs">Indicateurs</a>
         <a href="#previsions">Previsions</a>
+        <a href="#donnees">Donnees</a>
         <a href="#impacts">Impacts</a>
+        <a href="#sources">Sources</a>
       </nav>
       <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
@@ -41,13 +43,15 @@
 
   <main>
     <section id="accueil" class="hero">
+      <div class="hero-bg"></div>
       <div class="hero-content">
         <p class="hero-label">World Bank Climate Change Indicators</p>
         <h1>Impact climatique au Benin</h1>
         <p class="hero-desc">
-          Visualisation des indicateurs climatiques, exposition aux risques,
-          resilience, emissions et consommation energetique du Benin.
-          Donnees issues de <a href="https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2" target="_blank" rel="noopener">Donnees Publiques du Benin</a> (indicateurs Banque Mondiale).
+          Visualisation comparee des indicateurs climatiques, exposition aux risques,
+          resilience, emissions et consommation energetique du Benin. Comparez plusieurs indicateurs,
+          exportez vos graphiques et explorez les previsions.
+          Donnees issues de <a href="https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2" target="_blank" rel="noopener">Donnees Publiques du Benin</a>.
         </p>
       </div>
       <div class="hero-stats" id="hero-stats" aria-busy="true">
@@ -63,49 +67,207 @@
           <span class="stat-value" data-stat="elevation"><span class="skeleton">--</span></span>
           <span class="stat-label">Pop. zone &lt;5m alt.</span>
         </div>
+        <div class="stat-card">
+          <span class="stat-value" data-stat="forest"><span class="skeleton">--</span></span>
+          <span class="stat-label">Surface forestiere</span>
+        </div>
       </div>
     </section>
 
     <section id="indicateurs" class="section">
       <div class="section-header">
-        <h2>Indicateurs climatiques</h2>
-        <p>Evolution des principaux indicateurs lies au climat et au developpement durable</p>
+        <h2>Evolution des indicateurs</h2>
+        <p>Comparez jusqu'a 10 indicateurs (max). Les selections s'affichent dans le menu. Utilisez Tout/Aucun. Cliquez sur la legende pour afficher ou masquer une serie.</p>
       </div>
-      <div class="chart-filters">
-        <label for="indicator-select">Indicateur</label>
-        <select id="indicator-select" aria-label="Choisir un indicateur">
-          <option value="">Chargement...</option>
-        </select>
+      <div class="chart-toolbar">
+        <div class="chart-filters chart-filters--row">
+          <div class="filter-row filter-row--indicators">
+            <div class="filter-group multiselect-wrapper">
+              <label>Indicateurs</label>
+              <div class="multiselect" id="multiselect-main">
+                <button type="button" class="multiselect-trigger" id="trigger-main" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="multiselect-label">Choisir des indicateurs</span>
+                  <span class="multiselect-count" id="count-main" aria-hidden="true"></span>
+                  <svg class="multiselect-chevron" viewBox="0 0 24 24" width="20" height="20"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                </button>
+                <div class="multiselect-dropdown" id="dropdown-main" role="listbox">
+                  <div class="multiselect-dropdown-header">
+                    <input type="search" class="multiselect-search" placeholder="Rechercher..." id="search-main" aria-label="Rechercher un indicateur">
+                    <button type="button" class="multiselect-close" id="btn-close-main" aria-label="Replier">Réduire</button>
+                  </div>
+                  <div class="multiselect-list" id="list-main"></div>
+                  <div class="multiselect-footer">
+                    <span class="multiselect-summary" id="summary-main">0 / 10 selectionne(s)</span>
+                    <div class="multiselect-actions">
+                      <button type="button" class="multiselect-btn" id="btn-select-all-main">Tout</button>
+                      <button type="button" class="multiselect-btn" id="btn-select-none-main">Aucun</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="filter-group filter-group--inline">
+              <label>Type</label>
+              <select id="chart-type-main" aria-label="Type de graphique">
+                <option value="line">Ligne</option>
+                <option value="bar">Barres</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="chart-actions">
+          <button type="button" class="btn btn-secondary" id="btn-toggle-legend-main">Legende</button>
+          <button type="button" class="btn btn-primary" id="btn-export-main">Exporter</button>
+        </div>
+      </div>
+      <div class="export-modal" id="export-modal-main" role="dialog" aria-labelledby="export-title-main" aria-modal="true" hidden>
+        <div class="export-modal-backdrop"></div>
+        <div class="export-modal-content">
+          <h3 id="export-title-main">Exporter le graphique</h3>
+          <div class="export-steps">
+            <div class="export-step">
+              <span class="export-step-num">1</span>
+              <p>Choisir le format</p>
+              <div class="export-format-options">
+                <button type="button" class="export-format-btn" data-format="png">PNG</button>
+                <button type="button" class="export-format-btn" data-format="jpg">JPG</button>
+                <button type="button" class="export-format-btn" data-format="pdf">PDF</button>
+              </div>
+            </div>
+            <div class="export-step">
+              <span class="export-step-num">2</span>
+              <p>Choisir la taille</p>
+              <div class="export-size-options">
+                <button type="button" class="export-size-btn" data-size="1">Petit</button>
+                <button type="button" class="export-size-btn" data-size="1.5">Moyen</button>
+                <button type="button" class="export-size-btn active" data-size="2">Grand</button>
+              </div>
+            </div>
+            <div class="export-step">
+              <button type="button" class="btn btn-primary btn-download" id="btn-download-main">Telecharger</button>
+            </div>
+          </div>
+          <button type="button" class="export-modal-close" aria-label="Fermer">&times;</button>
+        </div>
       </div>
       <div class="chart-container" id="chart-main-wrap">
-        <div class="chart-loading" id="chart-main-loading">Chargement des donnees...</div>
-        <canvas id="chart-main" role="img" aria-label="Graphique de l'indicateur selectionne"></canvas>
+        <div class="chart-loading" id="chart-main-loading">Selectionnez un ou plusieurs indicateurs...</div>
+        <canvas id="chart-main" role="img" aria-label="Graphique des indicateurs"></canvas>
       </div>
+      <p class="chart-hint" id="chart-main-hint">Conseil: cochez plusieurs indicateurs pour les comparer. Les echelles peuvent varier selon les donnees.</p>
     </section>
 
     <section id="previsions" class="section section-alt">
       <div class="section-header">
         <h2>Previsions</h2>
-        <p>Projections basees sur les tendances observees (regression lineaire sur les 15 dernieres annees)</p>
+        <p>Projections basees sur les tendances (regression lineaire). Jusqu'a 10 indicateurs (max).</p>
       </div>
-      <div class="chart-filters">
-        <label for="forecast-select">Indicateur a projeter</label>
-        <select id="forecast-select" aria-label="Choisir un indicateur pour la prevision">
-          <option value="">Chargement...</option>
-        </select>
-        <label for="forecast-years">Annees a projeter</label>
-        <input type="number" id="forecast-years" value="10" min="1" max="30" aria-label="Nombre d'annees">
+      <div class="chart-toolbar">
+        <div class="chart-filters chart-filters--row">
+          <div class="filter-row filter-row--previsions">
+            <div class="filter-group multiselect-wrapper">
+              <label>Indicateurs</label>
+              <div class="multiselect" id="multiselect-forecast">
+                <button type="button" class="multiselect-trigger" id="trigger-forecast" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="multiselect-label">Choisir des indicateurs</span>
+                  <span class="multiselect-count" id="count-forecast" aria-hidden="true"></span>
+                  <svg class="multiselect-chevron" viewBox="0 0 24 24" width="20" height="20"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                </button>
+                <div class="multiselect-dropdown" id="dropdown-forecast" role="listbox">
+                  <div class="multiselect-dropdown-header">
+                    <input type="search" class="multiselect-search" placeholder="Rechercher..." id="search-forecast" aria-label="Rechercher un indicateur">
+                    <button type="button" class="multiselect-close" id="btn-close-forecast" aria-label="Replier">Réduire</button>
+                  </div>
+                  <div class="multiselect-list" id="list-forecast"></div>
+                  <div class="multiselect-footer">
+                    <div class="multiselect-footer-left">
+                      <span class="multiselect-summary" id="summary-forecast">0 / 10 selectionne(s)</span>
+                      <span class="multiselect-years" id="years-forecast">10 ans</span>
+                    </div>
+                    <div class="multiselect-actions">
+                      <button type="button" class="multiselect-btn" id="btn-select-all-forecast">Tout</button>
+                      <button type="button" class="multiselect-btn" id="btn-select-none-forecast">Aucun</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="filter-group filter-group--inline">
+              <label>Annees</label>
+              <div class="years-input-wrap">
+                <input type="number" id="forecast-years" value="10" min="1" max="30" aria-label="Annees a projeter">
+                <span class="years-suffix">ans</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-actions">
+          <button type="button" class="btn btn-secondary" id="btn-toggle-legend-forecast">Legende</button>
+          <button type="button" class="btn btn-primary" id="btn-export-forecast">Exporter</button>
+        </div>
+      </div>
+      <div class="export-modal" id="export-modal-forecast" role="dialog" aria-labelledby="export-title-forecast" aria-modal="true" hidden>
+        <div class="export-modal-backdrop"></div>
+        <div class="export-modal-content">
+          <h3 id="export-title-forecast">Exporter le graphique</h3>
+          <div class="export-steps">
+            <div class="export-step">
+              <span class="export-step-num">1</span>
+              <p>Choisir le format</p>
+              <div class="export-format-options">
+                <button type="button" class="export-format-btn" data-format="png">PNG</button>
+                <button type="button" class="export-format-btn" data-format="jpg">JPG</button>
+                <button type="button" class="export-format-btn" data-format="pdf">PDF</button>
+              </div>
+            </div>
+            <div class="export-step">
+              <span class="export-step-num">2</span>
+              <p>Choisir la taille</p>
+              <div class="export-size-options">
+                <button type="button" class="export-size-btn" data-size="1">Petit</button>
+                <button type="button" class="export-size-btn" data-size="1.5">Moyen</button>
+                <button type="button" class="export-size-btn active" data-size="2">Grand</button>
+              </div>
+            </div>
+            <div class="export-step">
+              <button type="button" class="btn btn-primary btn-download" id="btn-download-forecast">Telecharger</button>
+            </div>
+          </div>
+          <button type="button" class="export-modal-close" aria-label="Fermer">&times;</button>
+        </div>
       </div>
       <div class="chart-container" id="chart-forecast-wrap">
-        <div class="chart-loading" id="chart-forecast-loading">Chargement des previsions...</div>
+        <div class="chart-loading" id="chart-forecast-loading">Selectionnez un ou plusieurs indicateurs...</div>
         <canvas id="chart-forecast" role="img" aria-label="Graphique des previsions"></canvas>
       </div>
     </section>
 
-    <section id="impacts" class="section">
+    <section id="donnees" class="section">
+      <div class="section-header">
+        <h2>Tableau des donnees</h2>
+        <p>Valeurs brutes par annee et par indicateur. Utilisez le filtre pour restreindre l'affichage.</p>
+      </div>
+      <div class="chart-filters">
+        <label for="table-indicator-select">Indicateur</label>
+        <select id="table-indicator-select" aria-label="Indicateur pour le tableau">
+          <option value="">Chargement...</option>
+        </select>
+      </div>
+      <div class="data-table-wrap">
+        <div class="data-table-scroll">
+          <table class="data-table" id="data-table">
+            <thead><tr><th>Annee</th><th>Valeur</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="chart-hint">Donnees triees par annee decroissante. Les valeurs manquantes ne sont pas affichees.</p>
+    </section>
+
+    <section id="impacts" class="section section-alt">
       <div class="section-header">
         <h2>Apercu des impacts</h2>
-        <p>Resume des principaux enjeux climatiques pour le Benin</p>
+        <p>Resume des principaux enjeux climatiques pour le Benin avec tendances sur 5 ans</p>
       </div>
       <div class="impacts-grid" id="impacts-grid" aria-busy="true">
         <div class="impact-skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -117,7 +279,7 @@
       </div>
     </section>
 
-    <section class="section section-alt sources">
+    <section id="sources" class="section sources">
       <div class="section-header">
         <h2>Sources et methodologie</h2>
         <p>Donnees et references utilisees pour cette visualisation</p>
@@ -125,12 +287,12 @@
       <div class="sources-content">
         <p>
           Source principale des donnees : <a href="https://donneespubliques.gouv.bj/datasets/benin-climate-change-d28fc158-46e4-44e7-b6f9-7e962c0bc0b2" target="_blank" rel="noopener"><strong>Donnees Publiques du Benin - Benin Climate Change</strong></a>.
-          Les indicateurs proviennent du World Bank Climate Change Indicators (également disponibles sur <a href="https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin" target="_blank" rel="noopener">HDX</a>).
+          Les indicateurs proviennent du World Bank Climate Change Indicators (egalement sur <a href="https://data.humdata.org/dataset/world-bank-climate-change-indicators-for-benin" target="_blank" rel="noopener">HDX</a>).
         </p>
         <p>
           Le changement climatique touche particulierement les pays en developpement. Ses effets (temperatures plus elevees,
           modification des precipitations, montee du niveau de la mer, evenements meteorologiques extremes) menacent
-          l'agriculture, l'alimentation et l'acces a l'eau.
+          l'agriculture, l'alimentation et l'acces a l'eau. Les previsions sont basees sur une regression lineaire sur les 15 dernieres annees disponibles.
         </p>
       </div>
     </section>
@@ -144,6 +306,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
