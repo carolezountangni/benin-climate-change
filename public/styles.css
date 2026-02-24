@@ -316,7 +316,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   font-size: 0.875rem;
   color: var(--color-text-muted);
   line-height: 1.6;
-  max-width: 56ch;
+  max-width: 100%;
   overflow-wrap: break-word;
 }
 
