@@ -77,7 +77,7 @@
     <section id="indicateurs" class="section">
       <div class="section-header">
         <h2>Evolution des indicateurs</h2>
-        <p>Comparez jusqu'a 10 indicateurs (max). Les selections s'affichent dans le menu. Utilisez Tout/Aucun. Cliquez sur la legende pour afficher ou masquer une serie.</p>
+        <p>Choisissez jusqu'a 10 indicateurs maximum dans la liste complete (defilez pour tout voir). Mode « Valeurs reelles » : axes en unite d'origine. Mode « Comparaison » : courbes normalisees 0-100 pour comparer visuellement.</p>
       </div>
       <div class="chart-toolbar">
         <div class="chart-filters chart-filters--row">
@@ -97,9 +97,9 @@
                   </div>
                   <div class="multiselect-list" id="list-main"></div>
                   <div class="multiselect-footer">
-                    <span class="multiselect-summary" id="summary-main">0 / 10 selectionne(s)</span>
+                    <span class="multiselect-summary" id="summary-main">0 / 10 max</span>
                     <div class="multiselect-actions">
-                      <button type="button" class="multiselect-btn" id="btn-select-all-main">Tout</button>
+                      <button type="button" class="multiselect-btn" id="btn-select-all-main" title="Selectionner les 10 premiers (liste filtree)">10 premiers</button>
                       <button type="button" class="multiselect-btn" id="btn-select-none-main">Aucun</button>
                     </div>
                   </div>
@@ -113,10 +113,17 @@
                 <option value="bar">Barres</option>
               </select>
             </div>
+            <div class="filter-group filter-group--inline">
+              <label>Mode</label>
+              <select id="chart-mode-main" aria-label="Mode d'affichage">
+                <option value="compare">Comparaison (axe Y : 0-100)</option>
+                <option value="raw">Valeurs reelles (unites d'origine)</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="chart-actions">
-          <button type="button" class="btn btn-secondary" id="btn-toggle-legend-main">Legende</button>
+          <button type="button" class="btn btn-legend is-active" id="btn-toggle-legend-main">Legende</button>
           <button type="button" class="btn btn-primary" id="btn-export-main">Exporter</button>
         </div>
       </div>
@@ -150,17 +157,20 @@
           <button type="button" class="export-modal-close" aria-label="Fermer">&times;</button>
         </div>
       </div>
+      <div class="chart-mode-explanation chart-mode-explanation--main" id="chart-main-mode-explain" hidden>
+        <strong>Mode comparaison :</strong> axe horizontal = Annee ; axe vertical = index 0-100 (chaque courbe normalisee sur son min-max). Survolez pour voir les valeurs reelles.
+      </div>
       <div class="chart-container" id="chart-main-wrap">
         <div class="chart-loading" id="chart-main-loading">Selectionnez un ou plusieurs indicateurs...</div>
         <canvas id="chart-main" role="img" aria-label="Graphique des indicateurs"></canvas>
       </div>
-      <p class="chart-hint" id="chart-main-hint">Conseil: cochez plusieurs indicateurs pour les comparer. Les echelles peuvent varier selon les donnees.</p>
+      <p class="chart-hint" id="chart-main-hint">Conseil: cochez plusieurs indicateurs pour les comparer.</p>
     </section>
 
     <section id="previsions" class="section section-alt">
       <div class="section-header">
         <h2>Previsions</h2>
-        <p>Projections basees sur les tendances (regression lineaire). Jusqu'a 10 indicateurs (max).</p>
+        <p>Projections basees sur les tendances (regression lineaire). Chaque graphique a sa propre selection (max 10 indicateurs).</p>
       </div>
       <div class="chart-toolbar">
         <div class="chart-filters chart-filters--row">
@@ -181,11 +191,11 @@
                   <div class="multiselect-list" id="list-forecast"></div>
                   <div class="multiselect-footer">
                     <div class="multiselect-footer-left">
-                      <span class="multiselect-summary" id="summary-forecast">0 / 10 selectionne(s)</span>
+                      <span class="multiselect-summary" id="summary-forecast">0 / 10 max</span>
                       <span class="multiselect-years" id="years-forecast">10 ans</span>
                     </div>
                     <div class="multiselect-actions">
-                      <button type="button" class="multiselect-btn" id="btn-select-all-forecast">Tout</button>
+                      <button type="button" class="multiselect-btn" id="btn-select-all-forecast" title="Selectionner les 10 premiers (liste filtree)">10 premiers</button>
                       <button type="button" class="multiselect-btn" id="btn-select-none-forecast">Aucun</button>
                     </div>
                   </div>
@@ -199,10 +209,17 @@
                 <span class="years-suffix">ans</span>
               </div>
             </div>
+            <div class="filter-group filter-group--inline">
+              <label>Mode</label>
+              <select id="chart-mode-forecast" aria-label="Mode d'affichage">
+                <option value="compare">Comparaison (axe Y : 0-100)</option>
+                <option value="raw">Valeurs reelles (unites d'origine)</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="chart-actions">
-          <button type="button" class="btn btn-secondary" id="btn-toggle-legend-forecast">Legende</button>
+          <button type="button" class="btn btn-legend is-active" id="btn-toggle-legend-forecast">Legende</button>
           <button type="button" class="btn btn-primary" id="btn-export-forecast">Exporter</button>
         </div>
       </div>
@@ -235,6 +252,9 @@
           </div>
           <button type="button" class="export-modal-close" aria-label="Fermer">&times;</button>
         </div>
+      </div>
+      <div class="chart-mode-explanation chart-mode-explanation--forecast" id="chart-forecast-mode-explain" hidden>
+        <strong>Mode comparaison :</strong> axe horizontal = Annee ; axe vertical = index 0-100. Survolez pour les valeurs reelles.
       </div>
       <div class="chart-container" id="chart-forecast-wrap">
         <div class="chart-loading" id="chart-forecast-loading">Selectionnez un ou plusieurs indicateurs...</div>

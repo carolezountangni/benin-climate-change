@@ -7,16 +7,28 @@ const CONFIG = {
   dataUrl: 'data/climate-benin.json',
   maxIndicators: 10,
   colorPalette: [
-    { border: '#0d4f2b', fill: 'rgba(13, 79, 43, 0.15)' },
-    { border: '#1a7a47', fill: 'rgba(26, 122, 71, 0.12)' },
-    { border: '#2d9d5f', fill: 'rgba(45, 157, 95, 0.12)' },
-    { border: '#0a3d21', fill: 'rgba(10, 61, 33, 0.1)' }
+    { border: '#2563eb', fill: 'rgba(37, 99, 235, 0.12)' },
+    { border: '#dc2626', fill: 'rgba(220, 38, 38, 0.12)' },
+    { border: '#ea580c', fill: 'rgba(234, 88, 12, 0.12)' },
+    { border: '#9333ea', fill: 'rgba(147, 51, 234, 0.12)' },
+    { border: '#0d9488', fill: 'rgba(13, 148, 136, 0.12)' },
+    { border: '#ca8a04', fill: 'rgba(202, 138, 4, 0.12)' },
+    { border: '#db2777', fill: 'rgba(219, 39, 119, 0.12)' },
+    { border: '#1e40af', fill: 'rgba(30, 64, 175, 0.12)' },
+    { border: '#16a34a', fill: 'rgba(22, 163, 74, 0.12)' },
+    { border: '#7c3aed', fill: 'rgba(124, 58, 237, 0.12)' }
   ],
   forecastColorPalette: [
-    { hist: '#0d4f2b', pred: '#2d9d5f' },
-    { hist: '#1e5c8a', pred: '#4a9bd4' },
-    { hist: '#8b4513', pred: '#cd853f' },
-    { hist: '#5c2d91', pred: '#9b59b6' }
+    { hist: '#2563eb', pred: '#60a5fa' },
+    { hist: '#dc2626', pred: '#f87171' },
+    { hist: '#ea580c', pred: '#fb923c' },
+    { hist: '#9333ea', pred: '#c084fc' },
+    { hist: '#0d9488', pred: '#2dd4bf' },
+    { hist: '#ca8a04', pred: '#facc15' },
+    { hist: '#db2777', pred: '#f472b6' },
+    { hist: '#1e40af', pred: '#93c5fd' },
+    { hist: '#16a34a', pred: '#4ade80' },
+    { hist: '#7c3aed', pred: '#a78bfa' }
   ],
   heroIndicators: {
     agriculture: 'NV.AGR.TOTL.ZS',
@@ -65,6 +77,20 @@ function forecast(values, yearsAhead) {
     result.push({ year: lastYear + i, value: slope * (lastYear + i) + intercept });
   }
   return result;
+}
+
+/** Normalise une serie de valeurs entre 0 et 100 pour comparaison visuelle */
+function normalizeTo100(values) {
+  const valid = values.filter(v => v != null && typeof v === 'number' && !isNaN(v));
+  if (valid.length === 0) return { normalized: values, min: 0, max: 100 };
+  const min = Math.min(...valid);
+  const max = Math.max(...valid);
+  const range = max - min || 1;
+  const normalized = values.map(v => {
+    if (v == null || (typeof v !== 'number') || isNaN(v)) return null;
+    return ((v - min) / range) * 100;
+  });
+  return { normalized, min, max };
 }
 
 async function loadData() {
@@ -141,7 +167,8 @@ function updateMultiselectUI(type) {
     countEl.textContent = codes.length ? ` ${codes.length}` : '';
     countEl.style.display = codes.length ? 'inline' : 'none';
   }
-  if (summaryEl) summaryEl.textContent = `${codes.length} / ${CONFIG.maxIndicators} selectionne(s)`;
+  const total = indicators.length;
+  if (summaryEl) summaryEl.textContent = total > 0 ? `${codes.length} / ${CONFIG.maxIndicators} max (${total} indicateurs)` : `${codes.length} / ${CONFIG.maxIndicators} max`;
 
   if (type === 'forecast') {
     const years = document.getElementById('forecast-years')?.value || 10;
@@ -163,9 +190,10 @@ function initMultiselect(type) {
   function renderList(filter = '') {
     const f = filter.toLowerCase();
     const filtered = indicators.filter(i => !f || i.name.toLowerCase().includes(f));
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     listEl.innerHTML = filtered.map(({ code, name }) => {
       const selected = getSelectedCodes(type).includes(code);
-      return `<div class="multiselect-item" data-code="${code}"><input type="checkbox" data-code="${code}" ${selected ? 'checked' : ''}><span>${name}</span></div>`;
+      return `<div class="multiselect-item" data-code="${code}" title="${esc(name)}"><input type="checkbox" data-code="${code}" ${selected ? 'checked' : ''}><span>${name}</span></div>`;
     }).join('');
 
     listEl.querySelectorAll('.multiselect-item').forEach(item => {
@@ -264,6 +292,8 @@ function renderMainChart() {
   const canvas = document.getElementById('chart-main');
   const codes = getSelectedIndicatorsMain();
   const chartType = document.getElementById('chart-type-main')?.value || 'line';
+  const mode = document.getElementById('chart-mode-main')?.value || 'compare';
+  const useNormalize = mode === 'compare' && codes.length >= 2;
 
   if (!canvas || !climateData?.byIndicator) return;
 
@@ -295,19 +325,29 @@ function renderMainChart() {
     if (!ind?.values?.length) return;
     const sorted = [...ind.values].sort((a, b) => a.year - b.year);
     const byYear = Object.fromEntries(sorted.map(d => [d.year, d.value]));
-    const data = labels.map(y => byYear[y] ?? null);
+    let data = labels.map(y => byYear[y] ?? null);
+    const rawValues = data.slice();
+
+    if (useNormalize) {
+      const { normalized } = normalizeTo100(data);
+      data = normalized;
+    }
+
     const c = colors[i % colors.length];
-    datasets.push({
+    const ds = {
       label: ind.name,
       data,
       borderColor: c.border,
       backgroundColor: c.fill,
-      fill: chartType === 'line',
+      borderWidth: 2,
+      fill: chartType === 'line' && codes.length <= 3,
       tension: 0.3,
-      pointRadius: 2,
-      pointHoverRadius: 6,
+      pointRadius: 3,
+      pointHoverRadius: 8,
       spanGaps: true
-    });
+    };
+    if (useNormalize) ds.rawValues = rawValues;
+    datasets.push(ds);
   });
 
   if (!datasets.length) return;
@@ -323,27 +363,40 @@ function renderMainChart() {
         legend: {
           display: true,
           position: 'top',
-          labels: { font: { size: 11 }, boxWidth: 12 }
+          labels: { font: { size: 11 }, boxWidth: 14, padding: 8 }
         },
         tooltip: {
           callbacks: {
-            label: ctx => ctx.raw != null ? `${ctx.dataset.label}: ${ctx.raw?.toFixed?.(2) ?? ctx.raw}` : null
+            label: ctx => {
+              if (ctx.raw == null) return null;
+              const rawV = ctx.dataset.rawValues?.[ctx.dataIndex];
+              if (useNormalize && rawV != null && typeof rawV === 'number') {
+                return `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} (valeur: ${rawV.toFixed(2)})`;
+              }
+              return `${ctx.dataset.label}: ${ctx.raw?.toFixed?.(2) ?? ctx.raw}`;
+            }
           }
         }
       },
       scales: {
         x: {
+          title: { display: true, text: 'Année' },
           grid: { display: false },
           ticks: { maxTicksLimit: 14, font: { size: 10 } }
         },
         y: {
-          beginAtZero: false,
+          beginAtZero: useNormalize,
+          max: useNormalize ? 100 : undefined,
+          title: { display: true, text: useNormalize ? 'Index comparaison (0-100)' : 'Valeur' },
           grid: { color: 'rgba(0,0,0,0.06)' },
           ticks: { font: { size: 10 } }
         }
       }
     }
   });
+
+  const explainEl = document.getElementById('chart-main-mode-explain');
+  if (explainEl) explainEl.hidden = !useNormalize;
 }
 
 function renderForecastChart() {
@@ -351,6 +404,8 @@ function renderForecastChart() {
   const codes = getSelectedIndicatorsForecast();
   const yearsInput = document.getElementById('forecast-years');
   const yearsAhead = Math.min(30, Math.max(1, parseInt(yearsInput?.value || 10, 10) || 10));
+  const mode = document.getElementById('chart-mode-forecast')?.value || 'compare';
+  const useNormalize = mode === 'compare' && codes.length >= 2;
 
   if (!canvas || !climateData?.byIndicator) return;
 
@@ -393,30 +448,48 @@ function renderForecastChart() {
     const histByYear = Object.fromEntries(hist.map(d => [d.year, d.value]));
     const predByYear = Object.fromEntries(pred.map(d => [d.year, d.value]));
 
-    const histData = allLabels.map(y => histByYear[y] ?? null);
-    const predData = allLabels.map(y => predByYear[y] ?? null);
+    let histData = allLabels.map(y => histByYear[y] ?? null);
+    let predData = allLabels.map(y => predByYear[y] ?? null);
+
+    const histRaw = histData.slice();
+    const predRaw = predData.slice();
+
+    if (useNormalize) {
+      const allVals = [...histData, ...predData].filter(v => v != null && typeof v === 'number');
+      if (allVals.length > 0) {
+        const min = Math.min(...allVals);
+        const max = Math.max(...allVals);
+        const range = max - min || 1;
+        histData = histData.map(v => (v != null && typeof v === 'number') ? ((v - min) / range) * 100 : null);
+        predData = predData.map(v => (v != null && typeof v === 'number') ? ((v - min) / range) * 100 : null);
+      }
+    }
 
     datasets.push({
-      label: ind.name + ' (historique)',
+      label: ind.name + ' (hist.)',
       data: histData,
+      rawValues: useNormalize ? histRaw : undefined,
       borderColor: c.hist,
-      backgroundColor: c.hist.replace(')', ', 0.1)').replace('rgb', 'rgba'),
-      fill: true,
-      tension: 0.3,
-      pointRadius: 2,
-      pointHoverRadius: 6,
-      spanGaps: true
-    });
-    datasets.push({
-      label: ind.name + ' (prevision)',
-      data: predData,
-      borderColor: c.pred,
-      borderDash: [5, 5],
+      borderWidth: 2,
       backgroundColor: 'transparent',
       fill: false,
       tension: 0.3,
-      pointRadius: 2,
-      pointHoverRadius: 6,
+      pointRadius: 3,
+      pointHoverRadius: 8,
+      spanGaps: true
+    });
+    datasets.push({
+      label: ind.name + ' (prev.)',
+      data: predData,
+      rawValues: useNormalize ? predRaw : undefined,
+      borderColor: c.pred,
+      borderWidth: 2,
+      borderDash: [6, 4],
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.3,
+      pointRadius: 3,
+      pointHoverRadius: 8,
       spanGaps: true
     });
   });
@@ -434,36 +507,62 @@ function renderForecastChart() {
         legend: {
           display: true,
           position: 'top',
-          labels: { font: { size: 10 }, boxWidth: 10 }
+          labels: { font: { size: 10 }, boxWidth: 12, padding: 6 }
         },
         tooltip: {
           callbacks: {
-            label: ctx => ctx.raw != null ? `${ctx.dataset.label}: ${ctx.raw?.toFixed?.(2) ?? ctx.raw}` : null
+            label: ctx => {
+              if (ctx.raw == null) return null;
+              const rawV = ctx.dataset.rawValues?.[ctx.dataIndex];
+              if (useNormalize && rawV != null && typeof rawV === 'number') {
+                return `${ctx.dataset.label}: ${ctx.raw.toFixed(0)} (valeur: ${rawV.toFixed(2)})`;
+              }
+              return `${ctx.dataset.label}: ${ctx.raw?.toFixed?.(2) ?? ctx.raw}`;
+            }
           }
         }
       },
       scales: {
         x: {
+          title: { display: true, text: 'Année' },
           grid: { display: false },
           ticks: { maxTicksLimit: 16, font: { size: 10 } }
         },
         y: {
-          beginAtZero: false,
+          beginAtZero: useNormalize,
+          max: useNormalize ? 100 : undefined,
+          title: { display: true, text: useNormalize ? 'Index comparaison (0-100)' : 'Valeur' },
           grid: { color: 'rgba(0,0,0,0.06)' },
           ticks: { font: { size: 10 } }
         }
       }
     }
   });
-}
+  updateLegendButtonState('forecast');
 
+  const explainEl = document.getElementById('chart-forecast-mode-explain');
+  if (explainEl) explainEl.hidden = !useNormalize;
+}
 
 function toggleLegend(chartId) {
   const chart = chartId === 'main' ? mainChart : forecastChart;
+  const btnId = chartId === 'main' ? 'btn-toggle-legend-main' : 'btn-toggle-legend-forecast';
   if (!chart) return;
   const opts = chart.options.plugins.legend;
   opts.display = !opts.display;
   chart.update();
+  const btn = document.getElementById(btnId);
+  if (btn) btn.classList.toggle('is-active', opts.display);
+}
+
+function updateLegendButtonState(chartId) {
+  const chart = chartId === 'main' ? mainChart : forecastChart;
+  const btnId = chartId === 'main' ? 'btn-toggle-legend-main' : 'btn-toggle-legend-forecast';
+  const btn = document.getElementById(btnId);
+  if (chart && btn) {
+    const visible = chart.options.plugins.legend.display;
+    btn.classList.toggle('is-active', visible);
+  }
 }
 
 function exportChart(chart, format, scale = 2) {
@@ -674,7 +773,9 @@ function renderDataTable() {
 
 function initEvents() {
   document.getElementById('chart-type-main')?.addEventListener('change', renderMainChart);
+  document.getElementById('chart-mode-main')?.addEventListener('change', renderMainChart);
   document.getElementById('forecast-years')?.addEventListener('change', renderForecastChart);
+  document.getElementById('chart-mode-forecast')?.addEventListener('change', renderForecastChart);
 
   document.getElementById('btn-toggle-legend-main')?.addEventListener('click', () => toggleLegend('main'));
   document.getElementById('btn-toggle-legend-forecast')?.addEventListener('click', () => toggleLegend('forecast'));
