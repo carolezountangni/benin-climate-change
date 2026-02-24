@@ -352,18 +352,23 @@ function renderMainChart() {
 
   if (!datasets.length) return;
 
+  const isNarrow = typeof window !== 'undefined' && window.innerWidth < 768;
   mainChart = new Chart(canvas, {
     type: chartType,
     data: { labels, datasets },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: !isNarrow,
       interaction: { intersect: false, mode: 'index' },
       plugins: {
         legend: {
           display: true,
           position: 'top',
-          labels: { font: { size: 11 }, boxWidth: 14, padding: 8 }
+          labels: {
+            font: { size: isNarrow ? 10 : 11 },
+            boxWidth: isNarrow ? 10 : 14,
+            padding: isNarrow ? 4 : 8
+          }
         },
         tooltip: {
           callbacks: {
@@ -496,18 +501,23 @@ function renderForecastChart() {
 
   if (!datasets.length) return;
 
+  const isNarrowFc = typeof window !== 'undefined' && window.innerWidth < 768;
   forecastChart = new Chart(canvas, {
     type: 'line',
     data: { labels: allLabels, datasets },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: !isNarrowFc,
       interaction: { intersect: false, mode: 'index' },
       plugins: {
         legend: {
           display: true,
           position: 'top',
-          labels: { font: { size: 10 }, boxWidth: 12, padding: 6 }
+          labels: {
+            font: { size: isNarrowFc ? 9 : 10 },
+            boxWidth: isNarrowFc ? 8 : 12,
+            padding: isNarrowFc ? 4 : 6
+          }
         },
         tooltip: {
           callbacks: {
@@ -834,6 +844,9 @@ async function init() {
   renderImpacts();
   setDataDate();
   initEvents();
+
+  window.addEventListener('resize', handleResize);
+  window.addEventListener('orientationchange', handleResize);
 }
 
 init();

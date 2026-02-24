@@ -45,6 +45,8 @@ body {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
@@ -151,11 +153,18 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   font-weight: 700;
   font-size: 1.0625rem;
   color: var(--color-primary);
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .logo:hover {
   text-decoration: none;
   opacity: 0.9;
+}
+
+.logo span {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .logo-icon {
@@ -308,6 +317,16 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   color: var(--color-text-muted);
   line-height: 1.6;
   max-width: 56ch;
+  overflow-wrap: break-word;
+}
+
+/* ===== Main ===== */
+main {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 /* ===== Chart Toolbar ===== */
@@ -315,7 +334,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
@@ -338,6 +357,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text-muted);
+  overflow-wrap: break-word;
 }
 
 .chart-filters select,
@@ -389,6 +409,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   width: 100%;
   min-height: 44px;
   padding: 0.625rem 1rem;
+  flex-wrap: wrap;
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   background: var(--color-surface);
@@ -411,9 +432,17 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
 
 .multiselect-label {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+@media (min-width: 769px) {
+  .multiselect-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .multiselect-count {
@@ -534,6 +563,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   border-top: 1px solid var(--color-border-light);
   font-size: 0.75rem;
   color: var(--color-text-muted);
+  min-width: 0;
 }
 
 .multiselect-actions {
@@ -590,6 +620,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   align-items: flex-end;
   gap: 1rem;
   width: 100%;
+  min-width: 0;
 }
 
 .filter-row--indicators,
@@ -857,6 +888,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   color: var(--color-text);
   margin-bottom: 1rem;
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .chart-hint {
@@ -864,6 +896,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   color: var(--color-text-muted);
   margin-top: 0.75rem;
   line-height: 1.4;
+  overflow-wrap: break-word;
 }
 
 /* ===== Chart Container ===== */
@@ -875,6 +908,11 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
   min-height: 340px;
   position: relative;
   border: 1px solid var(--color-border-light);
+  max-width: 100%;
+}
+
+.chart-container > div {
+  max-width: 100%;
 }
 
 .chart-loading {
@@ -896,6 +934,7 @@ button, select, .multiselect-trigger, .multiselect-item, .btn {
 
 .chart-container canvas {
   max-height: 420px;
+  max-width: 100% !important;
 }
 
 /* ===== Data Table ===== */
